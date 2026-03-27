@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Everyday Dose — Basket Analytics | Powered by Aisle</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --purple: #4C19D8;
+    --purple-dark: #3610A2;
+    --purple-light: #EFEBFF;
+    --purple-mid: #EAE3FC;
+    --lime: #CCFCA8;
+    --lime-dark: #53A826;
+    --black: #000000;
+    --near-black: #0B0B0B;
+    --dark: #141414;
+    --mid: #2F2F2F;
+    --gray: #555;
+    --light-gray: #D5D5D5;
+    --white: #FFFFFF;
+    --off-white: #FFFCFC;
+    --text: #FFFFFF;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--black);
+    color: var(--white);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--near-black);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--mid);
+  }
+
+  .header-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 52px 40px 56px;
+    position: relative;
+  }
+
+  .header-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 16px;
+  }
+
+  .header-title {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 10px;
+    color: var(--white);
+  }
+
+  .header-title span { color: var(--purple); }
+
+  .header-subtitle {
+    font-size: 15px;
+    color: #aaa;
+    margin-bottom: 28px;
+    max-width: 480px;
+    line-height: 1.6;
+  }
+
+  .header-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .header-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .header-stat-val {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--lime);
+  }
+
+  .header-stat-label {
+    font-size: 11px;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* RETAILER TABS */
+  .tabs-wrap {
+    background: var(--near-black);
+    border-bottom: 1px solid var(--mid);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .tabs {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+  }
+
+  .tab {
+    padding: 16px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #888;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    outline: none;
+    font-family: inherit;
+  }
+
+  .tab:hover { color: var(--white); }
+
+  .tab.active {
+    color: var(--white);
+    border-bottom-color: var(--purple);
+  }
+
+  .tab .receipt-count {
+    font-size: 11px;
+    font-weight: 500;
+    color: #666;
+    margin-left: 6px;
+  }
+
+  .tab.active .receipt-count { color: #aaa; }
+
+  /* CONTENT */
+  .content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px;
+  }
+
+  .section {
+    margin-bottom: 48px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .section-icon {
+    font-size: 20px;
+  }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  .section-sub {
+    font-size: 13px;
+    color: #666;
+    margin-left: auto;
+  }
+
+  /* RETAILER STATS BANNER */
+  .retailer-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .stat-card {
+    background: var(--near-black);
+    border: 1px solid var(--mid);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+
+  .stat-card-val {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--lime);
+    margin-bottom: 4px;
+  }
+
+  .stat-card-label {
+    font-size: 12px;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* BRAND CARDS */
+  .brand-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+
+  .brand-card {
+    background: var(--near-black);
+    border: 1px solid var(--mid);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: border-color 0.15s;
+  }
+
+  .brand-card:hover { border-color: #444; }
+
+  .brand-emoji {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .brand-info { flex: 1; min-width: 0; }
+
+  .brand-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--white);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .brand-stats {
+    font-size: 12px;
+    color: #888;
+    margin-top: 2px;
+  }
+
+  .brand-count {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--purple-light);
+    flex-shrink: 0;
+  }
+
+  /* CATEGORY TABLE */
+  .category-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .category-table th {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #666;
+    text-align: left;
+    padding: 0 0 12px;
+    border-bottom: 1px solid var(--mid);
+  }
+
+  .category-table th:last-child { text-align: right; }
+
+  .category-table td {
+    padding: 11px 0;
+    border-bottom: 1px solid #1a1a1a;
+    font-size: 14px;
+    color: var(--white);
+  }
+
+  .category-table td:last-child {
+    text-align: right;
+    color: #888;
+    font-size: 13px;
+  }
+
+  .category-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .category-bar {
+    height: 4px;
+    background: var(--purple);
+    border-radius: 2px;
+    min-width: 2px;
+    flex-shrink: 0;
+  }
+
+  .category-count {
+    font-size: 13px;
+    color: #aaa;
+    min-width: 40px;
+    text-align: right;
+  }
+
+  /* PRICE BUCKETS */
+  .price-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+
+  .price-card {
+    background: var(--near-black);
+    border: 1px solid var(--mid);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .price-label {
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .price-pct {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--lime);
+  }
+
+  .price-count {
+    font-size: 11px;
+    color: #555;
+    margin-top: 4px;
+  }
+
+  /* INSIGHTS */
+  .insight-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .insight {
+    background: var(--near-black);
+    border: 1px solid var(--mid);
+    border-radius: 12px;
+    padding: 18px 22px;
+    display: flex;
+    gap: 16px;
+  }
+
+  .insight-num {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--purple-light);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .insight-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #ccc;
+  }
+
+  .insight-text strong { color: var(--white); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    background: var(--near-black);
+    border: 1px solid var(--mid);
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+  }
+
+  /* METHODOLOGY NOTE */
+  .methodology {
+    background: #0d0d0d;
+    border: 1px solid #1a1a1a;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 12px;
+    color: #555;
+    line-height: 1.6;
+    margin-top: 40px;
+  }
+
+  .methodology strong { color: #777; }
+
+  @media (max-width: 700px) {
+    .header-inner { padding: 32px 20px 36px; }
+    .content { padding: 24px 20px; }
+    .tabs { padding: 0 20px; }
+    .header-title { font-size: 26px; }
+    .retailer-stats { grid-template-columns: 1fr; }
+    .price-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-eyebrow">Aisle Intelligence · Everyday Dose</div>
+    <h1 class="header-title">Basket Analytics<br><span>Per-Retailer Breakdown</span></h1>
+    <p class="header-subtitle">What Everyday Dose customers buy in the same trip — filtered by retailer. Toggle between stores to see how the basket changes.</p>
+    <div class="header-meta">
+      <div class="header-stat">
+        <div class="header-stat-val">239K+</div>
+        <div class="header-stat-label">Line Items</div>
+      </div>
+      <div class="header-stat">
+        <div class="header-stat-val">39.7K</div>
+        <div class="header-stat-label">Receipts</div>
+      </div>
+      <div class="header-stat">
+        <div class="header-stat-val">4</div>
+        <div class="header-stat-label">Retailers</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('all')">All Retailers <span class="receipt-count">39.7K receipts</span></button>
+    <button class="tab" onclick="switchTab('Target')">🎯 Target <span class="receipt-count">32,564</span></button>
+    <button class="tab" onclick="switchTab('Sprouts')">🌿 Sprouts <span class="receipt-count">3,629</span></button>
+    <button class="tab" onclick="switchTab('Publix')">🛒 Publix <span class="receipt-count">686</span></button>
+    <button class="tab" onclick="switchTab('Other')">📦 Other <span class="receipt-count">2,805</span></button>
+  </div>
+</div>
+
+<div class="content" id="tab-content">
+  <!-- rendered by JS -->
+</div>
+
+<script>
+const RETAILER_DATA = {
+  Target: {
+    receiptCount: 32564,
+    avgItems: 5.8,
+    totalLineItems: 190275,
+    topBrands: [
+      { name: "Chobani", emoji: "🥤", count: 141, avgPrice: 5.47 },
+      { name: "Starbucks", emoji: "☕", count: 125, avgPrice: 8.32 },
+      { name: "Alani Nu", emoji: "⚡", count: 116, avgPrice: 2.39 },
+      { name: "Olipop", emoji: "🫧", count: 104, avgPrice: 2.89 },
+      { name: "KIND", emoji: "🍫", count: 80, avgPrice: 5.12 },
+      { name: "Celsius", emoji: "⚡", count: 46, avgPrice: 2.15 },
+      { name: "Oatly", emoji: "🥛", count: 45, avgPrice: 5.40 },
+      { name: "Fairlife", emoji: "🥛", count: 37, avgPrice: 5.18 },
+      { name: "Poppi", emoji: "🫧", count: 26, avgPrice: 2.49 },
+      { name: "RYZE", emoji: "☕", count: 12, avgPrice: 10.32 },
+      { name: "Little Spoon", emoji: "🥄", count: 12, avgPrice: 4.41 },
+      { name: "Good & Gather", emoji: "🏪", count: 21, avgPrice: 4.55 },
+    ],
+    topCategories: [
+      { name: "Beverages", count: 311, pct: 0.2 },
+      { name: "Health & Supplements", count: 452, pct: 0.2 },
+      { name: "Snacks", count: 174, pct: 0.1 },
+      { name: "Dairy & Milk", count: 134, pct: 0.1 },
+      { name: "Pantry", count: 178, pct: 0.1 },
+      { name: "Candy & Sweets", count: 76, pct: 0 },
+      { name: "Produce", count: 49, pct: 0 },
+      { name: "Frozen Foods", count: 48, pct: 0 },
+      { name: "Breakfast & Cereal", count: 41, pct: 0 },
+      { name: "Pet Products", count: 32, pct: 0 },
+      { name: "Bakery & Bread", count: 31, pct: 0 },
+      { name: "Meat & Seafood", count: 29, pct: 0 },
+    ],
+    priceBuckets: [
+      { label: "Under $5", count: 77284, pct: 40.6 },
+      { label: "$5–$10", count: 36065, pct: 19.0 },
+      { label: "$10–$20", count: 58690, pct: 30.8 },
+      { label: "$20–$50", count: 14168, pct: 7.4 },
+      { label: "$50+", count: 4068, pct: 2.1 },
+    ],
+    insights: [
+      "<strong>Premium functional beverage shopper.</strong> Chobani, Alani Nu, Olipop, Celsius, and Fairlife all appear consistently — this is the health-forward Everyday Dose buyer.",
+      "<strong>82% of total receipts.</strong> Target is overwhelmingly the primary retail channel. Average 5.8 items per basket — planned, full-cart trips.",
+      "<strong>Strong co-marketing signal.</strong> Alani Nu (116), Olipop (104), and Celsius (46) are natural campaign partners reaching the same shopper demo.",
+      "<strong>Premium-adjacent pricing.</strong> 30.8% of basket items fall in the $10–$20 range, suggesting willingness to spend on quality.",
+    ]
+  },
+  Sprouts: {
+    receiptCount: 3629,
+    avgItems: 6.6,
+    totalLineItems: 23935,
+    topBrands: [
+      { name: "MUD\\WTR", emoji: "🍵", count: 19, avgPrice: 17.49 },
+      { name: "Oatly", emoji: "🥛", count: 45, avgPrice: 5.40 },
+      { name: "Fairlife", emoji: "🥛", count: 37, avgPrice: 5.18 },
+      { name: "Fage", emoji: "🥛", count: 5, avgPrice: 1.59 },
+      { name: "Malk", emoji: "🌰", count: 2, avgPrice: 7.49 },
+      { name: "LesserEvil", emoji: "🍿", count: 1, avgPrice: 3.50 },
+    ],
+    topCategories: [
+      { name: "Beverages", count: 468, pct: 2.0 },
+      { name: "Produce", count: 192, pct: 0.8 },
+      { name: "Snacks", count: 179, pct: 0.7 },
+      { name: "Dairy & Milk", count: 122, pct: 0.5 },
+      { name: "Pantry", count: 113, pct: 0.5 },
+      { name: "Health & Supplements", count: 52, pct: 0.2 },
+      { name: "Deli", count: 52, pct: 0.2 },
+      { name: "Meat & Seafood", count: 70, pct: 0.3 },
+      { name: "Bakery & Bread", count: 47, pct: 0.2 },
+      { name: "Frozen Foods", count: 38, pct: 0.2 },
+      { name: "Candy & Sweets", count: 35, pct: 0.1 },
+      { name: "Breakfast & Cereal", count: 21, pct: 0.1 },
+    ],
+    priceBuckets: [
+      { label: "Under $5", count: 10985, pct: 45.9 },
+      { label: "$5–$10", count: 5803, pct: 24.2 },
+      { label: "$10–$20", count: 6352, pct: 26.5 },
+      { label: "$20–$50", count: 639, pct: 2.7 },
+      { label: "$50+", count: 156, pct: 0.7 },
+    ],
+    insights: [
+      "<strong>Higher engagement, smaller cohort.</strong> Sprouts shoppers average 6.6 items vs. 5.8 at Target — smaller basket count but deeper engagement per trip.",
+      "<strong>Fresh-first buyer profile.</strong> Beverages, Produce, and Dairy dominate. This is a whole-foods, clean-label shopper — a natural fit for Everyday Dose.",
+      "<strong>Lower price ceiling.</strong> 45.9% of items are under $5, and only 0.7% are over $50. More value-conscious than the Target cohort despite health focus.",
+      "<strong>Natural co-marketing partners here:</strong> Oatly, Fairlife, and MUD\\WTR all appear — functional wellness adjacency is strong at Sprouts.",
+    ]
+  },
+  Publix: {
+    receiptCount: 686,
+    avgItems: 8.7,
+    totalLineItems: 5993,
+    topBrands: [],
+    topCategories: [],
+    priceBuckets: [
+      { label: "Under $5", count: 3028, pct: 50.5 },
+      { label: "$5–$10", count: 1277, pct: 21.3 },
+      { label: "$10–$20", count: 1605, pct: 26.8 },
+      { label: "$20–$50", count: 44, pct: 0.7 },
+      { label: "$50+", count: 39, pct: 0.7 },
+    ],
+    insights: [
+      "<strong>Biggest baskets of any retailer.</strong> Publix shoppers average 8.7 items per trip — well above Target (5.8) and Sprouts (6.6). These are serious grocery runs.",
+      "<strong>Small but high-engagement cohort.</strong> Only 686 receipts (1.7% of total) but deepest cart behavior. Publix presence suggests Southeast/Florida concentration.",
+      "<strong>Price-anchored at low end.</strong> 50.5% of items under $5 — Publix shoppers are full-cart grocery buyers, not premium-only. Everyday Dose fits as the 'premium treat' in an otherwise value-focused cart.",
+      "<strong>Brand data limited for this cohort.</strong> The smaller receipt volume reduces statistical confidence for brand-level co-purchase analysis.",
+    ]
+  },
+  Other: {
+    receiptCount: 2805,
+    avgItems: 6.8,
+    totalLineItems: 19108,
+    topBrands: [
+      { name: "Slate", emoji: "☕", count: 3, avgPrice: 5.39 },
+      { name: "Little Spoon", emoji: "🥄", count: 3, avgPrice: 7.32 },
+      { name: "Chobani", emoji: "🥤", count: 2, avgPrice: 5.47 },
+      { name: "Starbucks", emoji: "☕", count: 2, avgPrice: 8.32 },
+    ],
+    topCategories: [
+      { name: "Beverages", count: 49, pct: 0.3 },
+      { name: "Pantry", count: 41, pct: 0.2 },
+      { name: "Snacks", count: 28, pct: 0.1 },
+      { name: "Produce", count: 26, pct: 0.1 },
+      { name: "Health & Supplements", count: 16, pct: 0.1 },
+      { name: "Meat & Seafood", count: 14, pct: 0.1 },
+      { name: "Dairy & Milk", count: 13, pct: 0.1 },
+      { name: "Candy & Sweets", count: 13, pct: 0.1 },
+      { name: "Deli", count: 10, pct: 0.1 },
+      { name: "Bakery & Bread", count: 9, pct: 0 },
+      { name: "Frozen Foods", count: 8, pct: 0 },
+      { name: "Breakfast & Cereal", count: 7, pct: 0 },
+    ],
+    priceBuckets: [
+      { label: "Under $5", count: 6941, pct: 37.2 },
+      { label: "$5–$10", count: 3303, pct: 17.8 },
+      { label: "$10–$20", count: 4332, pct: 23.3 },
+      { label: "$20–$50", count: 2301, pct: 12.4 },
+      { label: "$50+", count: 1746, pct: 9.4 },
+    ],
+    insights: [
+      "<strong>7% of total receipts.</strong> The 'Other' bucket includes Amazon Fresh, Walmart, Whole Foods, Costco, and misc retailers — no single store dominates.",
+      "<strong>Highest $50+ rate.</strong> 9.4% of Other receipts include items over $50 — likely Costco/warehouse-style bulk purchases mixed in.",
+      "<strong>Similar avg basket to Sprouts.</strong> 6.8 items/trip is on par with the Sprouts cohort — engaged shoppers regardless of channel.",
+      "<strong>Brand co-purchase data is limited here</strong> due to retailer diversity — keyword matching is less reliable across non-standard receipt formats.",
+    ]
+  }
+};
+
+// Aggregate "all" from the static page data (existing values)
+const ALL_DATA = {
+  receiptCount: 39684,
+  avgItems: 6.0,
+  totalLineItems: 239311,
+  topBrands: [
+    { name: "Chobani", emoji: "🥤", count: 141, avgPrice: 5.47 },
+    { name: "Starbucks", emoji: "☕", count: 125, avgPrice: 8.32 },
+    { name: "Alani Nu", emoji: "⚡", count: 116, avgPrice: 2.39 },
+    { name: "Olipop", emoji: "🫧", count: 104, avgPrice: 2.89 },
+    { name: "KIND", emoji: "🍫", count: 80, avgPrice: 5.12 },
+    { name: "Celsius", emoji: "⚡", count: 46, avgPrice: 2.15 },
+    { name: "Oatly", emoji: "🥛", count: 45, avgPrice: 5.40 },
+    { name: "Fairlife", emoji: "🥛", count: 37, avgPrice: 5.18 },
+    { name: "Poppi", emoji: "🫧", count: 26, avgPrice: 2.49 },
+    { name: "MUD\\WTR", emoji: "🍵", count: 19, avgPrice: 3.85 },
+    { name: "Dunkin'", emoji: "☕", count: 17, avgPrice: 9.51 },
+  ],
+  topCategories: [
+    { name: "Coffee Products", count: 1314, pct: 2.6 },
+    { name: "Health & Supplements", count: 535, pct: 1.1 },
+    { name: "Beverages", count: 877, pct: 0.9 },
+    { name: "Snacks", count: 381, pct: 0.7 },
+    { name: "Dairy & Milk", count: 269, pct: 0.5 },
+    { name: "Pantry", count: 332, pct: 0.5 },
+    { name: "Produce", count: 272, pct: 0.5 },
+    { name: "Matcha", count: 322, pct: 0.6 },
+    { name: "Nuts / Trail Mix", count: 292, pct: 0.6 },
+    { name: "Pet Products", count: 201, pct: 0.4 },
+    { name: "Protein Products", count: 142, pct: 0.3 },
+    { name: "Eggs", count: 202, pct: 0.4 },
+    { name: "Fresh Fruit", count: 279, pct: 0.6 },
+  ],
+  priceBuckets: [
+    { label: "Under $5", count: 98238, pct: 41.0 },
+    { label: "$5–$10", count: 46184, pct: 19.3 },
+    { label: "$10–$20", count: 71429, pct: 29.8 },
+    { label: "$20–$50", count: 19252, pct: 8.0 },
+    { label: "$50+", count: 4209, pct: 1.8 },
+  ],
+  insights: [
+    "<strong>Health-conscious, premium grocery shopper.</strong> Coffee, matcha, mushroom products, protein, and probiotics all over-index. This is the functional wellness buyer Everyday Dose is built for.",
+    "<strong>Strong affinity with functional beverage brands.</strong> Olipop, Alani Nu, Celsius, Poppi, and MUD\\WTR appear consistently — these are natural co-marketing partners worth exploring.",
+    "<strong>$52 median basket = planned, intentional stock-up trips.</strong> These aren't grab-and-go shoppers — Everyday Dose is landing in serious weekly grocery hauls.",
+    "<strong>82% of receipts are from Target.</strong> Target distribution is driving the vast majority of volume. Sprouts shows a smaller but higher-engagement cohort (6.6 avg items vs 5.8 at Target).",
+    "<strong>Full grocery runs, not supplement-only trips.</strong> Fresh food + dairy dominate — Chobani, Oatly, Fairlife, eggs, cheese, fruit. These shoppers trust premium brands across every aisle.",
+  ]
+};
+
+let currentTab = 'all';
+
+function switchTab(tab) {
+  currentTab = tab;
+  // Update tab UI
+  document.querySelectorAll('.tab').forEach((el, i) => {
+    const tabs = ['all', 'Target', 'Sprouts', 'Publix', 'Other'];
+    el.classList.toggle('active', tabs[i] === tab);
+  });
+  renderContent();
+}
+
+function fmt(n) {
+  return n >= 1000 ? (n / 1000).toFixed(1) + 'K' : n.toString();
+}
+
+function renderContent() {
+  const data = currentTab === 'all' ? ALL_DATA : RETAILER_DATA[currentTab];
+  const retailerLabel = currentTab === 'all' ? 'All Retailers' : currentTab;
+  const receiptShare = currentTab === 'all' ? '100%' :
+    Math.round(data.receiptCount / 39684 * 100) + '%';
+
+  let html = '';
+
+  // Stats banner
+  html += `<div class="retailer-stats">
+    <div class="stat-card">
+      <div class="stat-card-val">${fmt(data.receiptCount)}</div>
+      <div class="stat-card-label">Receipts at ${retailerLabel}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-val">${data.avgItems}</div>
+      <div class="stat-card-label">Avg items per trip</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-val">${receiptShare}</div>
+      <div class="stat-card-label">Share of total receipts</div>
+    </div>
+  </div>`;
+
+  // Co-purchase brands
+  html += `<div class="section">
+    <div class="section-header">
+      <span class="section-icon">🛍️</span>
+      <span class="section-title">Top Brands in the Same Basket</span>
+      <span class="section-sub">by receipt count</span>
+    </div>`;
+
+  if (data.topBrands && data.topBrands.length > 0) {
+    html += `<div class="brand-grid">`;
+    for (const b of data.topBrands) {
+      html += `<div class="brand-card">
+        <span class="brand-emoji">${b.emoji || '🛒'}</span>
+        <div class="brand-info">
+          <div class="brand-name">${b.name}</div>
+          <div class="brand-stats">${b.count} receipts · avg $${b.avgPrice.toFixed(2)}</div>
+        </div>
+        <span class="brand-count">${b.count}</span>
+      </div>`;
+    }
+    html += `</div>`;
+  } else {
+    html += `<div class="empty-state">Brand-level data is limited for this retailer cohort — the smaller receipt volume reduces statistical confidence for keyword matching.</div>`;
+  }
+  html += `</div>`;
+
+  // Category breakdown
+  if (data.topCategories && data.topCategories.length > 0) {
+    const maxCat = Math.max(...data.topCategories.map(c => c.count));
+    html += `<div class="section">
+      <div class="section-header">
+        <span class="section-icon">📊</span>
+        <span class="section-title">Top Product Categories in the Basket</span>
+      </div>
+      <table class="category-table">
+        <thead><tr>
+          <th>Category</th>
+          <th>Items</th>
+          <th>% of Basket</th>
+        </tr></thead>
+        <tbody>`;
+    for (const c of data.topCategories) {
+      const barWidth = Math.max(2, Math.round((c.count / maxCat) * 200));
+      html += `<tr>
+        <td>
+          <div class="category-bar-wrap">
+            <div class="category-bar" style="width:${barWidth}px"></div>
+            ${c.name}
+          </div>
+        </td>
+        <td><span class="category-count">${c.count.toLocaleString()}</span></td>
+        <td>${c.pct > 0 ? c.pct.toFixed(1) + '%' : '<0.1%'}</td>
+      </tr>`;
+    }
+    html += `</tbody></table></div>`;
+  }
+
+  // Price distribution
+  const PRICE_ORDER = ["Under $5", "$5–$10", "$10–$20", "$20–$50", "$50+"];
+  const orderedBuckets = PRICE_ORDER.map(label =>
+    data.priceBuckets.find(b => b.label === label) || { label, count: 0, pct: 0 }
+  );
+
+  html += `<div class="section">
+    <div class="section-header">
+      <span class="section-icon">💰</span>
+      <span class="section-title">Price Distribution</span>
+      <span class="section-sub">all items on ${retailerLabel} receipts</span>
+    </div>
+    <div class="price-grid">`;
+  for (const b of orderedBuckets) {
+    html += `<div class="price-card">
+      <div class="price-label">${b.label}</div>
+      <div class="price-pct">${b.pct.toFixed(1)}%</div>
+      <div class="price-count">${b.count.toLocaleString()} items</div>
+    </div>`;
+  }
+  html += `</div></div>`;
+
+  // Insights
+  if (data.insights && data.insights.length > 0) {
+    html += `<div class="section">
+      <div class="section-header">
+        <span class="section-icon">💡</span>
+        <span class="section-title">Aisle Intelligence — ${retailerLabel}</span>
+      </div>
+      <div class="insight-list">`;
+    data.insights.forEach((text, i) => {
+      html += `<div class="insight">
+        <div class="insight-num">${i + 1}</div>
+        <div class="insight-text">${text}</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // Methodology note
+  html += `<div class="methodology">
+    <strong>⚠️ Methodology note:</strong> This analysis uses keyword matching on OCR-extracted receipt line items and Aisle's category classification. Brand co-purchase counts reflect receipts where a keyword match was found in the line item text — directional signals, not exact counts. Category data uses Aisle's enumerated classification system. Per-retailer segmentation is based on the <code>storeName</code> field from the receipt image. Results are directional — exact percentages may vary.
+  </div>`;
+
+  document.getElementById('tab-content').innerHTML = html;
+}
+
+// Initial render
+renderContent();
+</script>
+</body>
+</html>
